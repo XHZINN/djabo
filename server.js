@@ -264,6 +264,13 @@ app.get('/api/jogos/:id', async (req, res) => {
     res.status(500).json({ error: 'Erro ao carregar o jogo' });
   }
 });
+
+// Serve o index.html da pasta public na raiz
+app.get('/', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
+});
+
+
 // ============================
 // PASSO 7 – Subir servidor
 // ============================
