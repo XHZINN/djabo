@@ -46,6 +46,8 @@
         const res = await fetch(`/api/jogos/${id}`);
         const jogo = await res.json();
 
+        console.log('Jogo recebido do backend:', jogo); // <-- ADICIONE AQUI
+
         const container = document.getElementById('detalhes-jogo');
         container.innerHTML = `
           <h1>${jogo.nome}</h1>
