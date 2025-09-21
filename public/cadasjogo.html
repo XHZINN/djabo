@@ -21,9 +21,6 @@
                 <label for="descricao" class="label-input">Descrição do jogo</label><br><br>
                 <textarea name="descricao" id="descricao" class="Input-user auto-resize" placeholder=" " required></textarea>
 
-                <label for="arq-jogo">Arquivo(s) do jogo</label><br><br>
-                <input type="file" name="arq-jogo" id="arq-jogo" class="Input-user" accept=".exe,.setup,.rar,.zip">
-
                 <label for="preco" >Preço do jogo</label><br><br>   
                 <input type="text" pattern="[0-9]+([,\.][0-9]{1,2})?" name="preco" step="0,01" id="preco" class="Input-user" min="0" inputmode="decimal" placeholder="0.00" required>
 
@@ -323,30 +320,17 @@
 
             const formData = new FormData(form); // pega todos os campos + arquivos
 
-            // Adiciona múltiplos arquivos se necessário (capa + jogo)
-            const capaInput = document.getElementById('imagem-capa');
-            if (capaInput.files.length > 0) {
-                formData.set('imagem-capa', capaInput.files[0]);
-            }
-
-            const jogoInput = document.getElementById('arq-jogo');
-            if (jogoInput.files.length > 0) {
-                formData.set('arq-jogo', jogoInput.files[0]);
-            }
-
             try {
-                const response = await fetch('/api/submit-form', {
+                const response = await fetch('http://localhost:3000/submit-form', {
                     method: 'POST',
                     body: formData
                 });
 
-                const data = await response.json();
-
                 if (response.ok) {
-                    alert(data.message || 'Jogo cadastrado com sucesso!');
+                    alert('Jogo cadastrado com sucesso!');
                     form.reset();
                 } else {
-                    alert(data.error || 'Erro ao cadastrar jogo.');
+                    alert('Erro ao cadastrar jogo.');
                 }
             } catch (err) {
                 console.error('Erro ao enviar formulário:', err);
@@ -354,8 +338,6 @@
             }
         });
     </script>
-
-
 
 </body>
 </html>

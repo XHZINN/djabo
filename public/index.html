@@ -65,32 +65,6 @@
      <footer>
         <p>&copy; 2025 NEXP </p>
      </footer>
-
-     <script>
-        async function carregarJogos() {
-        const container = document.getElementById('jogos-container');
-        try {
-            const res = await fetch('/api/jogos');
-            const jogos = await res.json();
-
-            jogos.forEach(jogo => {
-            const div = document.createElement('div');
-            div.classList.add('jogo');
-            div.innerHTML = `
-                <img src="${jogo.imagem_capa.replace(/\\/g,'/')}" alt="${jogo.nome}">
-                <p>${jogo.nome}</p>
-            `;
-            div.addEventListener('click', () => {
-                window.location.href = `jogo.html?id=${jogo.id}`;
-            });
-            container.appendChild(div);
-            });
-        } catch (err) {
-            console.error('Erro ao carregar jogos:', err);
-        }
-        }
-        carregarJogos();
-    </script>
     
 </body>
 </html>
