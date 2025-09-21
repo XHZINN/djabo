@@ -25,7 +25,9 @@ if (!fs.existsSync('uploads')) {
 // ============================
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: { rejectUnauthorized: false },
+  host: process.env.DB_HOST, // opcional
+  family: 4 // força IPv4
 });
 
 // Teste de conexão
