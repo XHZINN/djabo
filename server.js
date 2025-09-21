@@ -66,6 +66,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 
+
+
 // ============================
 // PASSO 5 – Configurar Multer (uploads)
 // ============================
