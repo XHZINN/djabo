@@ -9,7 +9,6 @@ import path from 'path';
 import fs from 'fs';
 import dotenv from 'dotenv';
 import pkg from 'pg';
-import { fileURLToPath } from 'url';
 const { Pool } = pkg;
 
 dotenv.config();
@@ -68,8 +67,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 // Serve arquivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -264,12 +261,6 @@ app.get('/api/jogos/:id', async (req, res) => {
     res.status(500).json({ error: 'Erro ao carregar o jogo' });
   }
 });
-
-// Serve o index.html da pasta public na raiz
-app.get('/', (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
-});
-
 
 // ============================
 // PASSO 7 – Subir servidor

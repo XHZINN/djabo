@@ -27,75 +27,65 @@
 <body>
   <div id="detalhes-jogo"></div>
 
-  <script>
-    function formatarMemoria(valor) {
-      if (!valor) return 'N/A';
-      if (valor >= 1024) {
-        return Math.round(valor / 1024) + ' GB';
-      } else {
-        return valor + ' MB';
+   <script>
+      function formatarMemoria(valor) {
+        if (!valor) return 'N/A';
+        return valor >= 1024 ? Math.round(valor/1024) + ' GB' : valor + ' MB';
       }
-    }
 
-    async function carregarJogo() {
-      const params = new URLSearchParams(window.location.search);
-      const id = params.get('id');
-      if (!id) return;
+      async function carregarJogo() {
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+        if (!id) return;
 
-      try {
-        const res = await fetch(`/api/jogos/${id}`);
-        const jogo = await res.json();
+        try {
+          const res = await fetch(`/api/jogos/${id}`);
+          const jogo = await res.json();
 
-        const container = document.getElementById('detalhes-jogo');
-        container.innerHTML = `
-          <h1>${jogo.nome}</h1>
-          <img src="${jogo.cont_capa.replace(/\\/g, '/')}" alt="${jogo.nome}" style="width:300px;">
-          <p>${jogo.descricao}</p>
-          <p>Preço: R$${jogo.preco}</p>
-          <p>Desenvolvedor: ${jogo.dev}</p>
-          <p>Quantidade: ${jogo.quantidade}</p>
+          const container = document.getElementById('detalhes-jogo');
+          container.innerHTML = `
+            <h1>${jogo.nome}</h1>
+            <img src="${jogo.cont_capa.replace(/\\/g,'/')}" alt="${jogo.nome}" style="width:300px;">
+            <p>${jogo.descricao}</p>
+            <p>Preço: R$${jogo.preco}</p>
+            <p>Desenvolvedor: ${jogo.dev}</p>
+            <p>Quantidade: ${jogo.quantidade}</p>
 
-          <h2>Requisitos do Jogo</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Tipo</th>
-                <th>CPU</th>
-                <th>GPU</th>
-                <th>RAM</th>
-                <th>SO</th>
-                <th>DirectX</th>
-                <th>Espaço no disco</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Mínimo</td>
-                <td>${jogo.min_cpu || 'N/A'}</td>
-                <td>${jogo.min_gpu || 'N/A'}</td>
-                <td>${formatarMemoria(jogo.min_ram)}</td>
-                <td>${jogo.min_so || 'N/A'}</td>
-                <td>${jogo.min_dir || 'N/A'}</td>
-                <td>${formatarMemoria(jogo.min_rom)}</td>
-              </tr>
-              <tr>
-                <td>Recomendado</td>
-                <td>${jogo.max_cpu || 'N/A'}</td>
-                <td>${jogo.max_gpu || 'N/A'}</td>
-                <td>${formatarMemoria(jogo.max_ram)}</td>
-                <td>${jogo.max_so || 'N/A'}</td>
-                <td>${jogo.max_dir || 'N/A'}</td>
-                <td>${formatarMemoria(jogo.max_rom)}</td>
-              </tr>
-            </tbody>
-          </table>
-        `;
-      } catch (err) {
-        console.error('Erro ao carregar jogo:', err);
+            <h2>Requisitos do Jogo</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Tipo</th><th>CPU</th><th>GPU</th><th>RAM</th><th>SO</th><th>DirectX</th><th>Espaço no disco</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Mínimo</td>
+                  <td>${jogo.min_cpu || 'N/A'}</td>
+                  <td>${jogo.min_gpu || 'N/A'}</td>
+                  <td>${formatarMemoria(jogo.min_ram)}</td>
+                  <td>${jogo.min_so || 'N/A'}</td>
+                  <td>${jogo.min_dir || 'N/A'}</td>
+                  <td>${formatarMemoria(jogo.min_rom)}</td>
+                </tr>
+                <tr>
+                  <td>Recomendado</td>
+                  <td>${jogo.max_cpu || 'N/A'}</td>
+                  <td>${jogo.max_gpu || 'N/A'}</td>
+                  <td>${formatarMemoria(jogo.max_ram)}</td>
+                  <td>${jogo.max_so || 'N/A'}</td>
+                  <td>${jogo.max_dir || 'N/A'}</td>
+                  <td>${formatarMemoria(jogo.max_rom)}</td>
+                </tr>
+              </tbody>
+            </table>
+          `;
+        } catch (err) {
+          console.error('Erro ao carregar jogo:', err);
+        }
       }
-    }
 
-    carregarJogo();
-  </script>
+      carregarJogo();
+    </script>
 </body>
 </html>

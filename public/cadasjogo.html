@@ -321,16 +321,18 @@
             const formData = new FormData(form); // pega todos os campos + arquivos
 
             try {
-                const response = await fetch('http://localhost:3000/submit-form', {
+                const response = await fetch('/api/submit-form', {
                     method: 'POST',
                     body: formData
                 });
 
+                const data = await response.json();
+
                 if (response.ok) {
-                    alert('Jogo cadastrado com sucesso!');
+                    alert(data.message || 'Jogo cadastrado com sucesso!');
                     form.reset();
                 } else {
-                    alert('Erro ao cadastrar jogo.');
+                    alert(data.error || 'Erro ao cadastrar jogo.');
                 }
             } catch (err) {
                 console.error('Erro ao enviar formulário:', err);
@@ -338,6 +340,7 @@
             }
         });
     </script>
+
 
 </body>
 </html>
