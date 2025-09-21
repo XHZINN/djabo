@@ -1,0 +1,261 @@
+html, body{
+    height: 100%;
+    margin: 0;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    font-family: 'Press Start 2P', sans-serif;
+    font-size: 12px;
+    background: linear-gradient(
+    to bottom,
+    #431188 0%,
+    #530356 50%,
+    #3c0299 100%) fixed;
+    color: white;
+    overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: -600px;
+  width: 180%;
+  height: 75%;
+  overflow: hidden;
+  background-image:
+    linear-gradient(transparent 95%, rgba(255, 0, 255, 0.3) 96%),
+    linear-gradient(to right, transparent 95%, rgba(255, 0, 255, 0.3) 96%);
+  background-size: 100px 100px;
+  transform: perspective(800px) rotateX(-50deg);
+  transform-origin: top;
+  pointer-events: none;
+  z-index: -1;
+  mask-image: linear-gradient(to bottom, white 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, white 60%, transparent 100%);
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  bottom: 0;       /* fixar na parte inferior */
+  left: -600px;
+  width: 180%;
+  height: 75%;
+  background-image:
+    linear-gradient(transparent 95%, rgba(255, 0, 255, 0.3) 96%),
+    linear-gradient(to right, transparent 95%, rgba(255, 0, 255, 0.3) 96%);
+  background-size: 100px 100px;
+  transform: perspective(800px) rotateX(50deg);  /* rotacionar para baixo */
+  transform-origin: bottom;
+  pointer-events: none;
+  z-index: -1;
+  mask-image: linear-gradient(to top, white 60%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, white 60%, transparent 100%);
+}
+    
+.box{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    margin: 20px auto;
+    background-color: #7700b3;
+    border-radius: 15px;
+    padding: 15px;
+    width: 100%;
+    max-width: 800px;
+    box-sizing: border-box;
+}
+
+.box form{
+    width: 100%;
+}
+fieldset{
+    flex: 1 1 auto;
+    position: relative;
+    padding: 15px 15px 15px;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 3px solid maroon;
+    border-radius: 15px;
+
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+legend{
+    text-align: center;
+    box-sizing: border-box;
+    border: 1px solid maroon;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: maroon;
+    color: white;
+    margin: 0 auto;
+}
+
+.titulo-secao{
+    text-align: center;
+    margin: 0 auto;
+    margin-bottom: 25px;
+    margin-top: 30px;
+}
+
+.caixa-entrada{
+    position: relative;
+}
+
+.requi-g {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
+    margin-bottom: 45px;
+}
+
+.rec-requi,
+.min-requi{
+  border: 1px solid #ccc;
+  padding: 1rem;
+  box-sizing: border-box;
+  border-radius: 10px;
+}
+
+.Input-user{
+    background: none;
+    border: none;
+    border-bottom: 1px solid white;
+    outline: none;
+    color: white;
+    font-size: 15px;
+    width: 100%;
+    letter-spacing: 1px;
+    margin-top: 20px;
+    margin-bottom: 15px; /* Espaço abaixo do input */
+    width: 100%;
+    font-family: 'Press Start 2P', sans-serif;
+    font-size: 12px;
+}
+
+label{
+    margin-bottom: 35px;
+    width: 100%;
+}
+
+#submit {
+    margin: 25px auto; /* Espaçamento superior e centralização automática */
+    padding: 12px 25px;
+    background-color: maroon;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', sans-serif;
+    font-size: 12px;
+    width: auto; /* Largura conforme conteúdo */
+    display: block; /* Permite margin:auto funcionar */
+}
+
+#submit:hover {
+    background-color: #800000;
+    transform: translateY(-2px); /* Efeito sutil de levantamento */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para profundidade */
+}
+
+.auto-resize {
+    resize: none; /* Remove o redimensionamento manual */
+    min-height: 40px; /* Altura inicial pequena */
+    max-height: 200px; /* Altura máxima antes do scroll */
+    overflow-y: auto; /* Scroll quando atingir max-height */
+    line-height: 1.5;
+    padding: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.gender-game{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.idioma-game{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.gender-game label {
+    display: flex;
+    align-items: center; /* Alinha checkbox + texto verticalmente */
+    flex: 1 1 30%; /* 3 colunas (ajuste conforme necessário) */
+    min-width: 120px; /* Largura mínima por item */
+    max-width: calc(33.33% - 20px); /* Limita a 3 colunas considerando o gap */
+    white-space: nowrap; /* Mantém o texto em uma linha */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adiciona "..." se o texto for muito longo */
+}
+
+.idioma-game label {
+    display: flex;
+    align-items: center; /* Alinha checkbox + texto verticalmente */
+    flex: 1 1 30%; /* 3 colunas (ajuste conforme necessário) */
+    min-width: 120px; /* Largura mínima por item */
+    max-width: calc(33.33% - 20px); /* Limita a 3 colunas considerando o gap */
+    white-space: nowrap; /* Mantém o texto em uma linha */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adiciona "..." se o texto for muito longo */
+}
+
+.gender-game input[type="checkbox"] {
+    margin: 0 8px 0 0; /* Espaço apenas à direita */
+    flex-shrink: 0; /* Impede que o checkbox diminua */
+}
+
+.idioma-game input[type="checkbox"] {
+    margin: 0 8px 0 0; /* Espaço apenas à direita */
+    flex-shrink: 0; /* Impede que o checkbox diminua */
+}
+
+input[type="checkbox"] {
+    margin: 0; /* Remove margens padrão */
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+}
+
+.plataforma-game {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%; /* Importante! */
+    align-items: flex-start;
+    margin: 0 auto; /* Centraliza se necessário */
+}
+
+.plataforma-game label {
+    display: grid !important;
+    grid-template-columns: 20px auto; /* Checkbox + texto */
+    align-items: flex-start;
+    gap: 8px;
+    margin: 0 !important;
+    width: auto !important;
+    white-space: nowrap;
+}
+
+.plataforma-game input[type="checkbox"] {
+    margin: 0 !important;
+    grid-column: 1;
+}
+
+.plataforma-game label > span {
+    grid-column: 2;
+}

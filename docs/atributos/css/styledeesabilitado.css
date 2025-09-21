@@ -1,0 +1,198 @@
+html, body{
+    height: 100%;
+    margin: 0;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    font-family: 'Press Start 2P', sans-serif;
+    font-size: 12px;
+    background: linear-gradient(purple, rgb(92, 0, 128), rgb(49, 5, 181)) fixed;
+    color: white;
+}
+
+.box{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    margin: 20px auto;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 800px;
+    box-sizing: border-box;
+}
+
+.box form{
+    width: 100%;
+}
+fieldset{
+    flex: 1 1 auto;
+    position: relative;
+    padding: 15px 15px 15px;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 3px solid maroon;
+    border-radius: 15px;
+
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+legend{
+    text-align: center;
+    box-sizing: border-box;
+    border: 1px solid maroon;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: maroon;
+    color: white;
+    margin: 0 auto;
+}
+
+.titulo-secao{
+    text-align: center;
+    margin: 0 auto;
+    margin-bottom: 25px;
+    margin-top: 30px;
+}
+
+.caixa-entrada{
+    position: relative;
+}
+
+.Input-user{
+    background: none;
+    border: none;
+    border-bottom: 1px solid white;
+    outline: none;
+    color: white;
+    font-size: 15px;
+    width: 100%;
+    letter-spacing: 1px;
+    margin-top: 20px;
+    margin-bottom: 15px; /* Espaço abaixo do input */
+    width: 100%;
+    font-family: 'Press Start 2P', sans-serif;
+    font-size: 12px;
+}
+
+label{
+    margin-bottom: 35px;
+    width: 100%;
+}
+
+button { 
+    margin-top: 15px; /* Espaço acima do botão */
+    padding: 10px 20px;
+    background-color: maroon;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', sans-serif;
+    font-size: 12px;
+}
+
+#submit:hover {
+    background-color: #800000;
+}
+
+.auto-resize {
+    resize: none; /* Remove o redimensionamento manual */
+    min-height: 40px; /* Altura inicial pequena */
+    max-height: 200px; /* Altura máxima antes do scroll */
+    overflow-y: auto; /* Scroll quando atingir max-height */
+    line-height: 1.5;
+    padding: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.gender-game{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.idioma-game{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.gender-game label {
+    display: flex;
+    align-items: center; /* Alinha checkbox + texto verticalmente */
+    flex: 1 1 30%; /* 3 colunas (ajuste conforme necessário) */
+    min-width: 120px; /* Largura mínima por item */
+    max-width: calc(33.33% - 20px); /* Limita a 3 colunas considerando o gap */
+    white-space: nowrap; /* Mantém o texto em uma linha */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adiciona "..." se o texto for muito longo */
+}
+
+.idioma-game label {
+    display: flex;
+    align-items: center; /* Alinha checkbox + texto verticalmente */
+    flex: 1 1 30%; /* 3 colunas (ajuste conforme necessário) */
+    min-width: 120px; /* Largura mínima por item */
+    max-width: calc(33.33% - 20px); /* Limita a 3 colunas considerando o gap */
+    white-space: nowrap; /* Mantém o texto em uma linha */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adiciona "..." se o texto for muito longo */
+}
+
+.gender-game input[type="checkbox"] {
+    margin: 0 8px 0 0; /* Espaço apenas à direita */
+    flex-shrink: 0; /* Impede que o checkbox diminua */
+}
+
+.idioma-game input[type="checkbox"] {
+    margin: 0 8px 0 0; /* Espaço apenas à direita */
+    flex-shrink: 0; /* Impede que o checkbox diminua */
+}
+
+input[type="checkbox"] {
+    margin: 0; /* Remove margens padrão */
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+}
+
+.plataforma-game {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%; /* Importante! */
+    align-items: flex-start;
+    margin: 0 auto; /* Centraliza se necessário */
+}
+
+.plataforma-game label {
+    display: grid !important;
+    grid-template-columns: 20px auto; /* Checkbox + texto */
+    align-items: flex-start;
+    gap: 8px;
+    margin: 0 !important;
+    width: auto !important;
+    white-space: nowrap;
+}
+
+.plataforma-game input[type="checkbox"] {
+    margin: 0 !important;
+    grid-column: 1;
+}
+
+.plataforma-game label > span {
+    grid-column: 2;
+}

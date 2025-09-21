@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="atributos/css/style.css">
+</head>
+<body>
+    <main class="principal-conteudo">
+        <h2>Popular</h2>
+        <!-- carrosel-->
+        <section class="carrosel">
+            <!-- seta esquerda -->
+            <button class="vlt-bt">&lt;</button>
+
+            <!-- slide -->
+             <div id="jogos-container">
+                <img src="" alt="">
+             </div>
+
+             <!-- Seta direita -->
+              <button class="prx-bt">&gt;;</button>
+        </section>
+    </main>
+    <script>
+        async function carregarJogos() {
+        const container = document.getElementById('jogos-container');
+        try {
+            const res = await fetch('/api/jogos');
+            const jogos = await res.json();
+
+            jogos.forEach(jogo => {
+            const div = document.createElement('div');
+            div.classList.add('jogo');
+            div.innerHTML = `
+                <img src="${jogo.imagem_capa.replace(/\\/g, '/')}" alt="${jogo.nome}">
+                <p>${jogo.nome}</p>
+            `;
+            div.addEventListener('click', () => {
+                window.location.href = `jogo.html?id=${jogo.id}`;
+            });
+            container.appendChild(div);
+            });
+        } catch (err) {
+            console.error('Erro ao carregar jogos:', err);
+        }
+        }
+
+        carregarJogos();
+  </script>
+</body>
+</html>

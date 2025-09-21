@@ -1,0 +1,7 @@
+.jogo img {
+    max-width: 200px;   /* largura máxima */
+    max-height: 300px;  /* altura máxima */
+    width: auto;        /* mantém proporção */
+    height: auto;       /* mantém proporção */
+    display: block;
+}

@@ -1,0 +1,343 @@
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="atributos/css/style1.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <title>cadastro de jogo</title>
+</head>
+<body>
+    <div class="box">
+        <form id="Form_jogo" >
+            <fieldset>
+                <legend>
+                   <b> Formulario de cadastro dos jogos</b>
+                </legend>
+                <br>
+             <div class="caixa-entrada">
+                <label for="name" class="label-input">Nome do jogo</label><br><br>
+                <input type="text" name="name" id="name" class="Input-user" placeholder=" " required>
+            
+                <label for="descricao" class="label-input">Descrição do jogo</label><br><br>
+                <textarea name="descricao" id="descricao" class="Input-user auto-resize" placeholder=" " required></textarea>
+
+                <label for="preco" >Preço do jogo</label><br><br>   
+                <input type="text" pattern="[0-9]+([,\.][0-9]{1,2})?" name="preco" step="0,01" id="preco" class="Input-user" min="0" inputmode="decimal" placeholder="0.00" required>
+
+                <p class="titulo-secao"><b>Gênero do jogo</b></p>
+                <div class="gender-game">
+
+                    <input type="checkbox" name="acao" id="acao" value="acao">
+                    <label for="acao">Ação</label>
+
+                    <input type="checkbox" name="aventura" id="aventura" value="aventura">
+                    <label for="aventura">Aventura</label>
+
+                    <input type="checkbox" name="rpg" id="rpg" value="rpg">
+                    <label for="rpg">RPG</label>
+
+                    <input type="checkbox" name="esporte" id="esporte" value="esporte">
+                    <label for="esporte">Esporte</label>
+
+                    <input type="checkbox" name="corrida" id="corrida" value="corrida">
+                    <label for="corrida">Corrida</label>
+
+                    <input type="checkbox" name="estrategia" id="estrategia" value="estrategia">
+                    <label for="estrategia">Estratégia</label>
+
+                    <input type="checkbox" name="simulacao" id="simulacao" value="simulacao">
+                    <label for="simulacao">Simulação</label>
+
+                    <input type="checkbox" name="terror" id="terror" value="terror">
+                    <label for="terror">Terror</label>
+
+                    <input type="checkbox" name="puzzle" id="puzzle" value="puzzle">
+                    <label for="puzzle">Puzzle</label>
+
+                    <input type="checkbox" name="mmo" id="mmo" value="mmo">
+                    <label for="mmo">MMO</label>
+
+                    <input type="checkbox" name="musica" id="musica" value="musica">
+                    <label for="musica">Música</label>
+
+                    <input type="checkbox" name="plataforma" id="plataforma" value="plataforma">
+                    <label for="plataforma">Plataforma</label>
+
+                    <input type="checkbox" name="sandbox" id="sandbox" value="sandbox">
+                    <label for="sandbox">Sandbox</label>
+
+                    <input type="checkbox" name="luta" id="luta" value="luta">
+                    <label for="luta">Luta</label>
+
+                    <input type="checkbox" name="tiro" id="tiro" value="tiro">
+                    <label for="tiro">Tiro</label>
+
+                    <input type="checkbox" name="sobrevivencia" id="sobrevivencia" value="sobrevivencia">
+                    <label for="sobrevivencia">Sobrevivência</label>
+
+                    <input type="checkbox" name="visualnovel" id="visualnovel" value="visualnovel">
+                    <label for="visualnovel">Visualnovel</label>
+
+                    <input type="checkbox" name="party" id="party" value="party">
+                    <label for="party">Party</label>
+
+                    <input type="checkbox" name="educacional" id="educacional" value="educacional">
+                    <label for="educacional">Educacional</label>
+
+                    <input type="checkbox" name="casual" id="casual" value="casual">
+                    <label for="casual">Casual</label>
+
+                    <input type="checkbox" name="roguelike" id="roguelike" value="roguelike">
+                    <label for="roguelike">Roguelike</label>
+
+                    <input type="checkbox" name="indie" id="indie" value="indie">
+                    <label for="indie">Indie</label>
+
+                </div>
+                <div class="requi-g" id="requi-g">
+                    <div class="min-requi" id="min-requi">
+
+                        <p class="titulo-secao"><b>Requisitos Minimos</b></p>
+
+                        <p>Buscar CPU</p>
+                        <input type="text" id="cpu-input-min" name="cpuMin" placeholder="Procure o CPU..." />
+                        <ul id="cpu-suggestions-min"></ul>
+
+                        <p>Buscar GPU</p>
+                        <input type="text" id="gpu-input-min" name="gpuMin" placeholder="Procure a GPU..." />
+                        <ul id="gpu-suggestions-min"></ul>
+
+                        <p>Memória RAM</p>
+                        <input type="text" id="ram-input-min" name="ramMin" placeholder="Digite a quantidade..." />
+                        <ul id="ram-suggestions-min"></ul>
+
+                        <p>Sistema Operacional (SO)</p>
+                        <input type="text" id="so-input-min" name="soMin" placeholder="Procure o SO..." />
+                        <ul id="so-suggestions-min"></ul>
+
+                        <p>Versão do DirectX</p>
+                        <div class="directx">
+                            <label><input type="radio" name="directxMin" value="9.0c"> DirectX 9.0c</label><br/>
+                            <label><input type="radio" name="directxMin" value="10"> DirectX 10</label><br/>
+                            <label><input type="radio" name="directxMin" value="11"> DirectX 11</label><br/>
+                            <label><input type="radio" name="directxMin" value="12"> DirectX 12</label><br/>
+                        </div>
+
+                        <p>Armazenamento</p>
+                        <input type="number" id="storage-value-min" name="storageMin" placeholder="Digite a quantidade" min="1" />
+                        <select id="storage-unit-min">
+                            <option value="GB">GB</option>
+                            <option value="MB">MB</option>
+                        </select>
+                    </div>
+                    <div class="rec-requi" id="rec-requi">
+
+                        <p class="titulo-secao"><b>Requisitos Recomendados</b></p>
+
+                        <p>Buscar CPU</p>
+                        <input type="text" id="cpu-input-rec" name="cpuRec" placeholder="Procure o CPU..." />
+                        <ul id="cpu-suggestions-rec"></ul>
+
+                        <p>Buscar GPU</p>
+                        <input type="text" id="gpu-input-rec" name="gpuRec" placeholder="Procure a GPU..." />
+                        <ul id="gpu-suggestions-rec"></ul>
+
+                        <p>Memória RAM</p>
+                        <input type="text" id="ram-input-rec" name="ramRec" placeholder="Digite a quantidade..." />
+                        <ul id="ram-suggestions-rec"></ul>
+
+                        <p>Sistema Operacional (SO)</p>
+                        <input type="text" id="so-input-rec" name="soRec" placeholder="Procure o SO..." />
+                        <ul id="so-suggestions-rec"></ul>
+
+                        <p>Versão do DirectX</p>
+                        <div class="directx">
+                            <label><input type="radio" name="directxRec" value="9.0c"> DirectX 9.0c</label><br/>
+                            <label><input type="radio" name="directxRec" value="10"> DirectX 10</label><br/>
+                            <label><input type="radio" name="directxRec" value="11"> DirectX 11</label><br/>
+                            <label><input type="radio" name="directxRec" value="12"> DirectX 12</label><br/>
+                        </div>
+
+                        <p>Armazenamento</p>
+                        <input type="number" id="storage-value-rec" name="storageRec" placeholder="Digite a quantidade" min="1" />
+                        <select id="storage-unit-rec">
+                            <option value="GB">GB</option>
+                            <option value="MB">MB</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label for="imagem-capa">Capa do jogo</label><br><br>
+                <input type="file" name="imagem-capa" id="imagem-capa" class="Input-user" accept="image/*">
+
+                <label for="data-lanc">Data de lançamento do jogo</label><br><br>
+                <input type="date" name="data-lanc" id="data-lanc" class="Input-user" required>
+
+                <label for="dev" class="label-input">Desenvolvedor do jogo</label><br><br>
+                <input type="text" name="dev" id="dev" class="Input-user" placeholder=" " required>
+
+                <label for="quantidade" class="label-input">Quantidade de copias do jogo</label><br><br>
+                <input type="number" name="quantidade" min="1" id="quantidade" class="Input-user" required>
+
+                <p class="titulo-secao"><b>Idiomas suportados no jogo</b></p>
+                <div class="idioma-game">
+
+                    <input type="checkbox" name="idioma" id="pt-br" value="pt-br">
+                    <label for="pt-br" title="Português Brasileiro">Português (BR)</label>
+
+                    <input type="checkbox" name="idioma" id="pt-pt" value="pt-pt">
+                    <label for="pt-pt" title="Português de Portugal">Português (PT)</label>
+
+                    <input type="checkbox" name="idioma" id="en" value="en">
+                    <label for="en">Inglês</label>
+
+                    <input type="checkbox" name="idioma" id="es" value="es">
+                    <label for="es">Espanhol</label>
+
+                    <input type="checkbox" name="idioma" id="fr" value="fr">
+                    <label for="fr">Francês</label>
+
+                    <input type="checkbox" name="idioma" id="de" value="de">
+                    <label for="de">Alemão</label>
+
+                    <input type="checkbox" name="idioma" id="it" value="it">
+                    <label for="it">Italiano</label>
+
+                    <input type="checkbox" name="idioma" id="ru" value="ru">
+                    <label for="ru">Russo</label>
+
+                    <input type="checkbox" name="idioma" id="ja" value="ja">
+                    <label for="ja">Japonês</label>
+
+                    <input type="checkbox" name="idioma" id="zh-cn" value="zh-cn">
+                    <label for="zh-cn" title="Chinês Simplificado">Chinês (CN)</label>
+
+                    <input type="checkbox" name="idioma" id="zh-tw" value="zh-tw">
+                    <label for="zh-tw" title="Chinês Tradicional">Chinês (TW)</label>
+
+                    <input type="checkbox" name="idioma" id="ko" value="ko">
+                    <label for="ko">Coreano</label>
+
+                    <input type="checkbox" name="idioma" id="ar" value="ar">
+                    <label for="ar">Árabe</label>
+
+                    <input type="checkbox" name="idioma" id="tr" value="tr">
+                    <label for="tr">Turco</label>
+
+                    <input type="checkbox" name="idioma" id="pl" value="pl">
+                    <label for="pl">Polonês</label>
+
+                    <input type="checkbox" name="idioma" id="nl" value="nl">
+                    <label for="nl">Holandês</label>
+
+                    <input type="checkbox" name="idioma" id="sv" value="sv">
+                    <label for="sv">Sueco</label>
+
+                    <input type="checkbox" name="idioma" id="fi" value="fi">
+                    <label for="fi">Finlandês</label>
+
+                    <input type="checkbox" name="idioma" id="no" value="no">
+                    <label for="no">Norueguês</label>
+
+                    <input type="checkbox" name="idioma" id="da" value="da">
+                    <label for="da">Dinamarquês</label>
+
+                    <input type="checkbox" name="idioma" id="el" value="el">
+                    <label for="el">Grego</label>
+
+                    <input type="checkbox" name="idioma" id="he" value="he">
+                    <label for="he">Hebraico</label>
+
+                    <input type="checkbox" name="idioma" id="hi" value="hi">
+                    <label for="hi">Hindi</label>
+
+                    <input type="checkbox" name="idioma" id="th" value="th">
+                    <label for="th">Tailandês</label>
+
+                    <input type="checkbox" name="idioma" id="vi" value="vi">
+                    <label for="vi">Vietnamita</label>
+
+                </div>
+                <p class="titulo-secao"><b>plataformas compativeis com o jogo</b></p>
+                <div class="plataforma-game">
+
+                    
+                    <label for="pc">
+                        <input type="checkbox" name="plataforma" id="pc" value="pc">
+                        <span>PC</span>
+                    </label>
+
+                    <label for="android">
+                        <input type="checkbox" name="plataforma" id="android" value="android">
+                        <span>Android</span>
+                    </label>
+
+                    <label for="ios">
+                        <input type="checkbox" name="plataforma" id="ios" value="ios">
+                        <span>IOS</span>
+                    </label>
+
+                    <label for="ns">
+                        <input type="checkbox" name="plataforma" id="ns" value="ns">
+                        <span>Nintendo Switch</span>
+                    </label>
+
+                    <label for="ps">
+                        <input type="checkbox" name="plataforma" id="ps" value="ps">
+                        <span>Playstation</span>
+                    </label>
+
+                    <label for="xbox">
+                        <input type="checkbox" name="plataforma" id="xbox" value="xbox">
+                        <span>Xbox</span>
+                    </label>
+
+                </div>
+             </div>
+             <button type="submit" id="submit" class="submit">Cadastrar</button>
+            </fieldset>
+        </form>
+    </div>
+    <script>
+        document.getElementById('preco').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9,-]/g, '');
+        });
+    </script>
+    <script>
+        document.querySelectorAll('textarea').forEach(textarea => {
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto'; 
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+        });
+    </script>
+    <script src="atributos/js/search.js"></script>
+    <script>
+        const form = document.getElementById('Form_jogo');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // evita reload da página
+
+            const formData = new FormData(form); // pega todos os campos + arquivos
+
+            try {
+                const response = await fetch('http://localhost:3000/submit-form', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert('Jogo cadastrado com sucesso!');
+                    form.reset();
+                } else {
+                    alert('Erro ao cadastrar jogo.');
+                }
+            } catch (err) {
+                console.error('Erro ao enviar formulário:', err);
+                alert('Erro ao enviar formulário.');
+            }
+        });
+    </script>
+
+</body>
+</html>
