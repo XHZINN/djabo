@@ -9,6 +9,7 @@ import path from 'path';
 import fs from 'fs';
 import dotenv from 'dotenv';
 import pkg from 'pg';
+import { fileURLToPath } from 'url';
 const { Pool } = pkg;
 
 dotenv.config();
@@ -67,6 +68,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+// Serve arquivos estáticos
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Rota raiz: envia index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 
 // ============================
