@@ -8,8 +8,7 @@ import cors from 'cors';
 import path from 'path';
 import fs from 'fs';
 import dotenv from 'dotenv';
-import pkg from 'pg';
-const { Pool } = pkg;
+import { createClient } from '@supabase/supabase-js'
 
 dotenv.config();
 
@@ -23,19 +22,20 @@ if (!fs.existsSync('uploads')) {
 // ============================
 // PASSO 3 – Conexão PostgreSQL
 // ============================
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
-});
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+)
 
 // Teste de conexão
-pool.query('SELECT NOW()', (err, res) => {
-  if (err) {
-    console.error('❌ Erro de conexão:', err);
-  } else {
-    console.log('✅ Conectado ao Supabase! Hora atual do banco:', res.rows[0].now);
-  }
-});
+supabase.from('sua_tabela').select('*').limit(1)
+  .then(({ data, error }) => {
+    if (error) {
+      console.error('❌ Erro Supabase:', error);
+    } else {
+      console.log('✅ Conectado ao Supabase! Dados:', data);
+    }
+  });
 
 function converterParaMB(valor) {
   if (!valor) return null;
