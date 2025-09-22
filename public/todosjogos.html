@@ -55,7 +55,7 @@
                     div.classList.add('jogo');
                     
                     // Verifica se há imagem de capa
-                    const imagemSrc = jogo.imagem_capa ? jogo.imagem_capa.replace(/\\/g, '/') : 'placeholder.jpg';
+                    const imagemSrc = jogo.cont_capa ? jogo.cont_capa.replace(/\\/g, '/') : 'placeholder.jpg';
                     
                     div.innerHTML = `
                         <img src="${imagemSrc}" alt="${jogo.nome}" onerror="this.src='placeholder.jpg'">
