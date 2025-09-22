@@ -46,9 +46,12 @@
 
   <script>
     function formatarMemoria(valor) {
-      if (!valor) return 'N/A';
+      if (!valor || valor === 'N/A') return 'N/A';
+      
+      // Se o valor for maior que 1024 MB, converte para GB
       if (valor >= 1024) {
-        return Math.round(valor / 1024) + ' GB';
+        const gb = (valor / 1024).toFixed(1);
+        return gb.endsWith('.0') ? parseInt(gb) + ' GB' : gb + ' GB';
       } else {
         return valor + ' MB';
       }
