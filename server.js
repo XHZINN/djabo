@@ -22,10 +22,11 @@ if (!fs.existsSync('uploads')) {
 // ============================
 // PASSO 3 – Conexão PostgreSQL
 // ============================
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
-)
+const supabaseUrl = 'https://tofmwbxkrigmeyrgsnvq.supabase.co'
+const supabaseKey = process.env.SUPABASE_KEY // ⬅️ USE ASSIM MESMO!
+const supabase = createClient(supabaseUrl, supabaseKey)
+
+export default supabase
 
 // Teste de conexão
 supabase.from('jogos').select('*').limit(1)
@@ -223,7 +224,7 @@ app.get('/api/jogos', async (req, res) => {
   try {
     const { data: jogos, error } = await supabase
       .from('jogos')
-      .select('id, nome, cont_capa AS imagem_capa');
+      .select('id, nome, cont_capa');
     
     if (error) {
       console.error('Erro Supabase:', error);
