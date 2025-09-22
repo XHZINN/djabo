@@ -58,8 +58,8 @@
                     const imagemSrc = jogo.cont_capa ? jogo.cont_capa.replace(/\\/g, '/') : 'placeholder.jpg';
                     
                     div.innerHTML = `
-                        <img src="${imagemSrc}" alt="${jogo.nome}" onerror="this.src='placeholder.jpg'">
                         <p>${jogo.nome}</p>
+                        <img src="${imagemSrc}" alt="${jogo.nome}" onerror="this.src='placeholder.jpg'">
                     `;
                     
                     div.addEventListener('click', () => {

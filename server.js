@@ -78,6 +78,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 const cpUpload = upload.fields([
   { name: 'imagem-capa', maxCount: 1 },
+  { name: 'arquivo-jogo', maxCount: 1 } // NOVO: arquivo do jogo
 ]);
 
 // ============================
@@ -120,7 +121,7 @@ app.post('/submit-form', cpUpload, async (req, res) => {
     console.log('Arquivos recebidos:', req.files);
 
     // ====== Dados principais do jogo ======
-    const { name, descricao, preco, data_lanc, dev, quantidade } = req.body;
+    const { name, descricao, preco, data_lanc, dev } = req.body; // REMOVE quantidade
     const dataLancamento = req.body['data-lanc'] ? new Date(req.body['data-lanc']).toISOString().split('T')[0] : null;
     const precoCorrigido = preco.replace(',', '.');
     const directxMin = req.body.directxMin;
@@ -135,9 +136,9 @@ app.post('/submit-form', cpUpload, async (req, res) => {
         preco: parseFloat(precoCorrigido),
         data_lanc: dataLancamento,
         descricao: descricao,
-        quantidade: parseInt(quantidade),
         cont_midia: [],
-        cont_capa: ''
+        cont_capa: '',
+        arq_jogos: '' // NOVA COLUNA para armazenar caminho do arquivo
       })
       .select('id')
       .single();
@@ -230,28 +231,43 @@ app.post('/submit-form', cpUpload, async (req, res) => {
     if (requisitosError) throw requisitosError;
 
     // ====== Criar pastas e salvar arquivos ======
-    const pastaJogo = `uploads/${name.replace(/\s+/g, '_')}_${jogoId}`;
+     const pastaJogo = `uploads/${name.replace(/\s+/g, '_')}_${jogoId}`;
     const pastaCapa = path.join(pastaJogo, 'Capa');
+    const pastaArquivos = path.join(pastaJogo, 'Arquivos'); // NOVA PASTA
 
     if (!fs.existsSync(pastaJogo)) fs.mkdirSync(pastaJogo, { recursive: true });
     if (!fs.existsSync(pastaCapa)) fs.mkdirSync(pastaCapa, { recursive: true });
+    if (!fs.existsSync(pastaArquivos)) fs.mkdirSync(pastaArquivos, { recursive: true });
 
     let caminhoImagemCapa = null;
+    let caminhoArquivoJogo = null;
 
+    // Processar imagem da capa
     if (req.files && req.files['imagem-capa']?.[0]) {
       const file = req.files['imagem-capa'][0];
       const novoCaminho = path.join(pastaCapa, file.originalname);
       fs.renameSync(file.path, novoCaminho);
       caminhoImagemCapa = novoCaminho;
-
-      // ====== Atualizar caminho da imagem ======
-      const { error: updateError } = await supabase
-        .from('jogos')
-        .update({ cont_capa: caminhoImagemCapa })
-        .eq('id', jogoId);
-
-      if (updateError) throw updateError;
     }
+
+    // Processar arquivo do jogo (NOVO)
+    if (req.files && req.files['arquivo-jogo']?.[0]) {
+      const file = req.files['arquivo-jogo'][0];
+      const novoCaminho = path.join(pastaArquivos, file.originalname);
+      fs.renameSync(file.path, novoCaminho);
+      caminhoArquivoJogo = novoCaminho;
+    }
+
+    // ====== Atualizar caminhos no banco ======
+    const { error: updateError } = await supabase
+      .from('jogos')
+      .update({ 
+        cont_capa: caminhoImagemCapa,
+        arq_jogos: caminhoArquivoJogo // SALVAR CAMINHO DO ARQUIVO
+      })
+      .eq('id', jogoId);
+
+    if (updateError) throw updateError;
 
     res.status(201).send('Jogo cadastrado com sucesso!');
   } catch (error) {
@@ -320,6 +336,46 @@ app.get('/api/jogos/:id', async (req, res) => {
     res.status(500).json({ error: 'Erro ao carregar o jogo' });
   }
 });
+
+// Rota para download do arquivo do jogo
+app.get('/download/:jogoId', async (req, res) => {
+  try {
+    const jogoId = req.params.jogoId;
+    
+    // Buscar informações do jogo no banco
+    const { data: jogo, error } = await supabase
+      .from('jogos')
+      .select('arq_jogos, nome')
+      .eq('id', jogoId)
+      .single();
+
+    if (error || !jogo) {
+      return res.status(404).send('Jogo não encontrado');
+    }
+
+    if (!jogo.arq_jogos) {
+      return res.status(404).send('Arquivo do jogo não disponível');
+    }
+
+    // Verificar se o arquivo existe
+    if (!fs.existsSync(jogo.arq_jogos)) {
+      return res.status(404).send('Arquivo não encontrado no servidor');
+    }
+
+    // Configurar headers para download
+    const filename = path.basename(jogo.arq_jogos);
+    res.setHeader('Content-Disposition', `attachment; filename="${jogo.nome.replace(/\s+/g, '_')}_${filename}"`);
+    res.setHeader('Content-Type', 'application/octet-stream');
+
+    // Enviar arquivo
+    res.download(jogo.arq_jogos);
+
+  } catch (error) {
+    console.error('Erro no download:', error);
+    res.status(500).send('Erro interno do servidor');
+  }
+});
+
 // ============================
 // PASSO 7 – Subir servidor
 // ============================

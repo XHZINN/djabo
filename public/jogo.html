@@ -22,6 +22,23 @@
       max-width: 100%;
       height: auto;
     }
+    .btn-download {
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 0;
+    }
+    .btn-download:hover {
+      background-color: #45a049;
+    }
+    .btn-download:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
@@ -46,16 +63,21 @@
         const res = await fetch(`/api/jogos/${id}`);
         const jogo = await res.json();
 
-        console.log('Jogo recebido do backend:', jogo); // <-- ADICIONE AQUI
+        console.log('Jogo recebido do backend:', jogo);
 
         const container = document.getElementById('detalhes-jogo');
         container.innerHTML = `
           <h1>${jogo.nome}</h1>
-          <img src="${jogo.cont_capa.replace(/\\/g, '/')}" alt="${jogo.nome}" style="width:300px;">
+          <img src="${jogo.cont_capa?.replace(/\\/g, '/') || 'placeholder.jpg'}" alt="${jogo.nome}" style="width:300px;">
           <p>${jogo.descricao}</p>
           <p>Preço: R$${jogo.preco}</p>
           <p>Desenvolvedor: ${jogo.dev}</p>
-          <p>Quantidade: ${jogo.quantidade}</p>
+          
+          <!-- BOTÃO DE DOWNLOAD -->
+          ${jogo.arq_jogos ? 
+            `<button class="btn-download" onclick="baixarJogo(${jogo.id})">📥 Baixar Jogo</button>` : 
+            `<button class="btn-download" disabled>⚠️ Download Indisponível</button>`
+          }
 
           <h2>Requisitos do Jogo</h2>
           <table>
@@ -95,6 +117,18 @@
       } catch (err) {
         console.error('Erro ao carregar jogo:', err);
       }
+    }
+
+    // Função para baixar o jogo
+    function baixarJogo(jogoId) {
+      // Abre em nova aba ou faz download direto
+      window.open(`/download/${jogoId}`, '_blank');
+      
+      // Ou alternativamente, força o download:
+      // const link = document.createElement('a');
+      // link.href = `/download/${jogoId}`;
+      // link.download = 'jogo.zip';
+      // link.click();
     }
 
     carregarJogo();
