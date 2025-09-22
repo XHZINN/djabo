@@ -1,7 +1,233 @@
+@import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&family=Press+Start+2P&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 .jogo img {
     max-width: 200px;   /* largura máxima */
     max-height: 300px;  /* altura máxima */
     width: auto;        /* mantém proporção */
     height: auto;       /* mantém proporção */
     display: block;
+}
+
+body{
+    background-color: #8c52ff;
+    color: #10eeff;
+    font-family: "Press Start 2P", system-ui;
+    font-weight: 400;
+}
+header{
+    padding: 2rem;
+    background-color: #311b5f;
+    text-align: center;
+    font-size: 1.2rem;
+    border-bottom: 2px solid yellow;
+}
+nav {
+    display: flex;
+    align-items: center; /* centraliza na vertical */
+    justify-content: space-between; /* espaço entre os elementos */
+}
+
+.top-menu {
+    display: flex;
+    list-style: none; /* tira as bolinhas */
+    align-items: center;  /* centraliza verticalmente */
+    padding: 0;
+    margin: 0;
+}
+
+.top-menu li {
+    margin-right: 20px; /* espaço entre os itens */
+}
+
+.top-menu a {
+    text-decoration: none; /* tira o sublinhado */
+    color: #10eeff;
+    background-color: #5930aa;
+    padding: 0.5rem;
+    border-radius: 5px;
+    transition: 0.2s;
+}
+button{
+     font-family: "Press Start 2P", system-ui;
+     font-size: 0.5rem;
+     background-color: #5930aa;
+     border: none;
+     border-radius: 5px;
+     padding: 0.5rem;
+     color: #10eeff;
+     cursor: pointer;
+     transition: 0.2s; 
+    } 
+
+button:hover,
+.press li a:hover {
+    color: yellow; /* quando passa o mouse */
+    box-shadow: -2px 0 yellow, 0 2px yellow;
+    }
+
+button:active,
+.press li a:active {
+    background-color: #eb10ff; /* quando clica */
+    color: #10eeff;
+}
+.botao {
+    display: inline-block;
+    font-family: "Press Start 2P", system-ui;
+    font-size: 0.5rem;
+    background-color: #5930aa;
+    padding: 0.5rem;
+    color: #10eeff;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.botao:hover {
+    color: yellow;
+    box-shadow: -2px 0 yellow, 0 2px yellow;
+}
+
+.botao:active {
+    color: #10eeff;
+    background-color: #eb10ff;
+}
+.busca{
+    background-color: #5930aa;
+    border: none;
+    border-radius: 5px;
+    padding: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* espaço entre input e botão */
+}
+.busca input {
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    border: 2px solid #5930aa;
+    outline: none;
+    font-family: "Press Start 2P", system-ui;
+    font-size: 0.8rem;
+}
+
+.busca button {
+    padding: 0.5rem 1rem;
+    background-color: #10eeff; /* fundo roxo */
+    border: none; 
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: "Press Start 2P", system-ui;
+    font-size: 0.8rem;
+    transition: 0.2s;
+    box-shadow: -2px 0 #10eeff, 0 2px #10eeff;
+    color: #10eeff;   /* texto azul claro */
+    outline: none;    /* remove borda azul padrão do navegador */
+}
+
+.busca button:hover {
+    background-color: yellow;
+    color: #10eeff;
+}
+
+.busca button:active {
+    transform: scale(0.95); /* efeito de clique */
+    background-color: #eb10ff;
+}
+
+p.user{
+    border-radius: 100%;
+    padding: 0.8rem;
+    background-color: #10eeff;
+    color: black;
+    border: 5px solid #5930aa;
+    transition: 0.2s;
+}
+p.user:hover{
+    color: yellow;
+}
+p.user:active {
+    background-color: #eb10ff;
+    color: #10eeff;
+}
+
+footer{
+    background-color: #311b5f;
+    border-top: 2px solid yellow;
+    padding: 2rem;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between; /* espalha um em cada canto */
+    align-items: center;            /* alinha na vertical */
+}
+
+.social-icons {
+  list-style: none;   /* tira as bolinhas */
+  display: flex;      /* deixa em linha */
+  gap: 1rem;          /* espaço entre os ícones */
+  padding: 0;
+  margin: 0;
+}
+.social-icons li a {
+  color: #fff;        /* cor do ícone */
+  font-size: 1.5rem;  /* tamanho */
+  transition: color 0.3s;
+}
+.social-icons li a:hover {
+  color: yellow;     /* muda a cor no hover */
+}
+
+.carrossel {
+    display: flex;
+    align-items: center;         /* centraliza verticalmente */
+    justify-content: center;     /* centraliza horizontalmente */
+    gap: 1rem;                   /* espaço entre imagem e botões */
+    margin: 3rem auto;           /* centraliza na página */
+}
+
+.rotulo {
+    text-align: center;          /* centraliza o título acima da imagem */
+    display: inline-block;
+}
+
+.rotulo img {
+    max-width: 800px;            /* largura da imagem */
+    border-radius: 10px;
+    display: block;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.titulo-imagem {
+    margin-bottom: 0.5rem;       /* espaço entre o título e a imagem */
+    color: #10eeff;
+    font-family: "Press Start 2P", system-ui;
+    font-size: 2rem;
+    padding-bottom: 1rem;
+}
+
+.carrossel button {
+    background-color: #5930aa;
+    border: none;
+    padding: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1.5rem;
+    transition: 0.2s;
+}
+
+.carrossel button:hover {
+    color: yellow;
+}
+.carrossel button:active {
+    color: #10eeff;
+    background-color: #eb10ff;
 }
