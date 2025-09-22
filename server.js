@@ -83,21 +83,38 @@ const cpUpload = upload.fields([
 // ============================
 // FUNÇÃO AUXILIAR: insere em tabela relacional.
 // ============================
+// FUNÇÃO AUXILIAR: insere em tabela relacional (usando Supabase)
 async function inserirOuObterId(nomeTabela, campoNome, valor) {
-  const result = await pool.query(
-    `INSERT INTO ${nomeTabela} (${campoNome}) VALUES ($1)
-     ON CONFLICT (${campoNome}) DO UPDATE SET ${campoNome}=EXCLUDED.${campoNome}
-     RETURNING id`,
-    [valor]
-  );
-  return result.rows[0].id;
+  // Verifica se já existe
+  const { data: existing, error: selectError } = await supabase
+    .from(nomeTabela)
+    .select('id')
+    .eq(campoNome, valor)
+    .single();
+
+  if (selectError && selectError.code !== 'PGRST116') {
+    throw selectError;
+  }
+
+  if (existing) {
+    return existing.id;
+  }
+
+  // Se não existe, insere
+  const { data: newRecord, error: insertError } = await supabase
+    .from(nomeTabela)
+    .insert({ [campoNome]: valor })
+    .select('id')
+    .single();
+
+  if (insertError) throw insertError;
+  return newRecord.id;
 }
 
 // ============================
 // PASSO 6 – Rota para receber formulário
 // ============================
 app.post('/submit-form', cpUpload, async (req, res) => {
-  const client = await pool.connect();
   try {
     console.log('Dados recebidos no corpo:', req.body);
     console.log('Arquivos recebidos:', req.files);
@@ -105,22 +122,28 @@ app.post('/submit-form', cpUpload, async (req, res) => {
     // ====== Dados principais do jogo ======
     const { name, descricao, preco, data_lanc, dev, quantidade } = req.body;
     const dataLancamento = req.body['data-lanc'] ? new Date(req.body['data-lanc']).toISOString().split('T')[0] : null;
-
     const precoCorrigido = preco.replace(',', '.');
-
-    await client.query('BEGIN');
-
     const directxMin = req.body.directxMin;
     const directxRec = req.body.directxRec;
 
     // ====== Insert na tabela jogos ======
-    const resultJogo = await client.query(
-      `INSERT INTO jogos (nome, dev, preco, data_lanc, descricao, quantidade, cont_midia, cont_capa)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
-       RETURNING id`,
-      [name, dev, parseFloat(precoCorrigido), dataLancamento, descricao, quantidade, [], '']
-    );
-    const jogoId = resultJogo.rows[0].id;
+    const { data: jogoData, error: jogoError } = await supabase
+      .from('jogos')
+      .insert({
+        nome: name,
+        dev: dev,
+        preco: parseFloat(precoCorrigido),
+        data_lanc: dataLancamento,
+        descricao: descricao,
+        quantidade: parseInt(quantidade),
+        cont_midia: [],
+        cont_capa: ''
+      })
+      .select('id')
+      .single();
+
+    if (jogoError) throw jogoError;
+    const jogoId = jogoData.id;
 
     // ====== Generos ======
     const generosSelecionados = Object.keys(req.body).filter(key =>
@@ -132,11 +155,17 @@ app.post('/submit-form', cpUpload, async (req, res) => {
 
     for (const genero of generosSelecionados) {
       const generoId = await inserirOuObterId('generos', 'nome', genero);
-      await client.query(
-        `INSERT INTO jogos_generos (jogo_id, genero_id) VALUES ($1,$2)
-         ON CONFLICT DO NOTHING`,
-        [jogoId, generoId]
-      );
+      
+      const { error: generoError } = await supabase
+        .from('jogos_generos')
+        .insert({
+          jogo_id: jogoId,
+          genero_id: generoId
+        });
+
+      if (generoError && generoError.code !== '23505') { // 23505 = unique violation (já existe)
+        throw generoError;
+      }
     }
 
     // ====== Idiomas ======
@@ -146,11 +175,17 @@ app.post('/submit-form', cpUpload, async (req, res) => {
 
     for (const idioma of idiomas) {
       const idiomaId = await inserirOuObterId('idiomas', 'nome', idioma);
-      await client.query(
-        `INSERT INTO jogos_idiomas (jogo_id, idioma_id) VALUES ($1,$2)
-         ON CONFLICT DO NOTHING`,
-        [jogoId, idiomaId]
-      );
+      
+      const { error: idiomaError } = await supabase
+        .from('jogos_idiomas')
+        .insert({
+          jogo_id: jogoId,
+          idioma_id: idiomaId
+        });
+
+      if (idiomaError && idiomaError.code !== '23505') {
+        throw idiomaError;
+      }
     }
 
     // ====== Plataformas ======
@@ -160,25 +195,39 @@ app.post('/submit-form', cpUpload, async (req, res) => {
 
     for (const plataforma of plataformas) {
       const plataformaId = await inserirOuObterId('plataformas', 'nome', plataforma);
-      await client.query(
-        `INSERT INTO jogos_plataformas (jogo_id, plataforma_id) VALUES ($1,$2)
-         ON CONFLICT DO NOTHING`,
-        [jogoId, plataformaId]
-      );
+      
+      const { error: plataformaError } = await supabase
+        .from('jogos_plataformas')
+        .insert({
+          jogo_id: jogoId,
+          plataforma_id: plataformaId
+        });
+
+      if (plataformaError && plataformaError.code !== '23505') {
+        throw plataformaError;
+      }
     }
 
     // ====== Requisitos ======
-    await client.query(
-      `INSERT INTO "Requisitos"
-        (id_jogo, "min_cpu", "min_gpu", "min_ram", "min_so", "min_dir", "min_rom",
-         "max_cpu", "max_gpu", "max_ram", "max_so", "max_dir", "max_rom")
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
-      [
-        jogoId,
-        req.body.cpuMin, req.body.gpuMin, converterParaMB(req.body.ramMin), req.body.soMin, req.body.directxMin, converterParaMB(req.body.storageMin),
-        req.body.cpuRec, req.body.gpuRec, converterParaMB(req.body.ramRec), req.body.soRec, req.body.directxRec, converterParaMB(req.body.storageRec)
-      ]
-    );
+    const { error: requisitosError } = await supabase
+      .from('Requisitos')
+      .insert({
+        id_jogo: jogoId,
+        min_cpu: req.body.cpuMin,
+        min_gpu: req.body.gpuMin,
+        min_ram: converterParaMB(req.body.ramMin),
+        min_so: req.body.soMin,
+        min_dir: directxMin,
+        min_rom: converterParaMB(req.body.storageMin),
+        max_cpu: req.body.cpuRec,
+        max_gpu: req.body.gpuRec,
+        max_ram: converterParaMB(req.body.ramRec),
+        max_so: req.body.soRec,
+        max_dir: directxRec,
+        max_rom: converterParaMB(req.body.storageRec)
+      });
+
+    if (requisitosError) throw requisitosError;
 
     // ====== Criar pastas e salvar arquivos ======
     const pastaJogo = `uploads/${name.replace(/\s+/g, '_')}_${jogoId}`;
@@ -187,34 +236,27 @@ app.post('/submit-form', cpUpload, async (req, res) => {
     if (!fs.existsSync(pastaJogo)) fs.mkdirSync(pastaJogo, { recursive: true });
     if (!fs.existsSync(pastaCapa)) fs.mkdirSync(pastaCapa, { recursive: true });
 
-    const arquivosProcessados = new Set();
     let caminhoImagemCapa = null;
 
-    if (req.files) {
-      if (req.files['imagem-capa']?.[0]) {
-        const file = req.files['imagem-capa'][0];
-        const novoCaminho = path.join(pastaCapa, file.originalname);
-        fs.renameSync(file.path, novoCaminho);
-        caminhoImagemCapa = novoCaminho;
-        arquivosProcessados.add(file.originalname);
-      }
+    if (req.files && req.files['imagem-capa']?.[0]) {
+      const file = req.files['imagem-capa'][0];
+      const novoCaminho = path.join(pastaCapa, file.originalname);
+      fs.renameSync(file.path, novoCaminho);
+      caminhoImagemCapa = novoCaminho;
 
+      // ====== Atualizar caminho da imagem ======
+      const { error: updateError } = await supabase
+        .from('jogos')
+        .update({ cont_capa: caminhoImagemCapa })
+        .eq('id', jogoId);
+
+      if (updateError) throw updateError;
     }
 
-    // Atualizar caminhos
-    await client.query(
-      `UPDATE jogos SET cont_capa=$1 WHERE id=$2`,
-      [ caminhoImagemCapa, jogoId]
-    );
-
-    await client.query('COMMIT');
     res.status(201).send('Jogo cadastrado com sucesso!');
   } catch (error) {
-    await client.query('ROLLBACK');
     console.error('Erro ao cadastrar jogo:', error);
-    res.status(500).send('Erro ao cadastrar jogo.');
-  } finally {
-    client.release();
+    res.status(500).send('Erro ao cadastrar jogo: ' + error.message);
   }
 });
 

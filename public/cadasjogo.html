@@ -321,7 +321,7 @@
             const formData = new FormData(form); // pega todos os campos + arquivos
 
             try {
-                const response = await fetch('http://localhost:3000/submit-form', {
+                const response = await fetch('/submit-form', {
                     method: 'POST',
                     body: formData
                 });
