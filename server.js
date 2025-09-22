@@ -28,7 +28,7 @@ const supabase = createClient(
 )
 
 // Teste de conexão
-supabase.from('sua_tabela').select('*').limit(1)
+supabase.from('jogos').select('*').limit(1)
   .then(({ data, error }) => {
     if (error) {
       console.error('❌ Erro Supabase:', error);
