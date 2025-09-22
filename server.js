@@ -221,9 +221,15 @@ app.post('/submit-form', cpUpload, async (req, res) => {
 // Rota para listar todos os jogos
 app.get('/api/jogos', async (req, res) => {
   try {
-    const { rows: jogos } = await pool.query(
-      `SELECT id, nome, cont_capa AS imagem_capa FROM jogos`
-    );
+    const { data: jogos, error } = await supabase
+      .from('jogos')
+      .select('id, nome, cont_capa AS imagem_capa');
+    
+    if (error) {
+      console.error('Erro Supabase:', error);
+      return res.status(500).json({ error: 'Erro ao carregar jogos' });
+    }
+    
     res.json(jogos);
   } catch (err) {
     console.error(err);
@@ -231,23 +237,43 @@ app.get('/api/jogos', async (req, res) => {
   }
 });
 
-// Rota para buscar detalhes de um jogo específico
+// Rota para buscar detalhes de um jogo específico (COM SUPABASE)
 app.get('/api/jogos/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const { rows } = await pool.query(
-      `SELECT j.*, r.min_cpu, r.min_gpu, r.min_ram, r.min_so, r.min_dir, r.min_rom,
-              r.max_cpu, r.max_gpu, r.max_ram, r.max_so, r.max_dir, r.max_rom
-       FROM jogos j
-       LEFT JOIN "Requisitos" r ON j.id = r.id_jogo
-       WHERE j.id=$1`,
-      [id]
-    );
+    // Busca os dados do jogo
+    const { data: jogoData, error: jogoError } = await supabase
+      .from('jogos')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-    if (rows.length === 0) return res.status(404).json({ error: 'Jogo não encontrado' });
-    res.json(rows[0]);
+    if (jogoError) {
+      console.error('Erro ao buscar jogo:', jogoError);
+      return res.status(404).json({ error: 'Jogo não encontrado' });
+    }
+
+    // Busca os requisitos do jogo
+    const { data: requisitosData, error: requisitosError } = await supabase
+      .from('Requisitos')
+      .select('*')
+      .eq('id_jogo', id)
+      .single();
+
+    if (requisitosError && requisitosError.code !== 'PGRST116') {
+      // PGRST116 significa "nenhum resultado encontrado", o que é ok
+      console.error('Erro ao buscar requisitos:', requisitosError);
+    }
+
+    // Combina os dados do jogo com os requisitos
+    const resultado = {
+      ...jogoData,
+      ...(requisitosData || {}) // Se não houver requisitos, usa objeto vazio
+    };
+
+    res.json(resultado);
   } catch (err) {
-    console.error(err);
+    console.error('Erro geral:', err);
     res.status(500).json({ error: 'Erro ao carregar o jogo' });
   }
 });
