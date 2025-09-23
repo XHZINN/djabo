@@ -38,22 +38,46 @@ supabase.from('jogos').select('*').limit(1)
     }
   });
 
+// Função para converter para MB antes de salvar no banco
 function converterParaMB(valor) {
-  if (!valor) return null;
+  if (!valor || valor === '') return null;
 
-  // Normaliza o valor (remove espaços e transforma em minúsculas)
   const v = valor.toString().trim().toLowerCase();
 
   if (v.endsWith('gb')) {
     const numero = parseFloat(v.replace('gb', '').trim());
-    return numero * 1024; // converte GB para MB
+    return !isNaN(numero) ? numero * 1024 : null;
   } else if (v.endsWith('mb')) {
     const numero = parseFloat(v.replace('mb', '').trim());
-    return numero; // já está em MB
+    return !isNaN(numero) ? numero : null;
   } else {
-    // se não tiver unidade, assume MB
-    return parseFloat(v);
+    // Se não tem unidade, assume que é número puro (MB)
+    const numero = parseFloat(v);
+    return !isNaN(numero) ? numero : null;
   }
+}
+
+// Função auxiliar para converter preço
+function converterPreco(valorPreco) {
+  if (!valorPreco) return 0;
+  
+  // Remove caracteres não numéricos exceto ponto e vírgula
+  const limpo = valorPreco.toString().replace(/[^\d,.]/g, '');
+  
+  // Substitui a última vírgula por ponto (formato brasileiro)
+  const comPonto = limpo.replace(',', '.');
+  
+  // Converte para número
+  const numero = parseFloat(comPonto);
+  
+  // Verifica se é um número válido
+  if (isNaN(numero)) {
+    console.error('Preço inválido:', valorPreco);
+    return 0;
+  }
+  
+  console.log('Conversão de preço:', valorPreco, '→', limpo, '→', comPonto, '→', numero);
+  return numero;
 }
 
 
@@ -81,10 +105,9 @@ const cpUpload = upload.fields([
   { name: 'arquivo-jogo', maxCount: 1 } // NOVO: arquivo do jogo
 ]);
 
-// ============================
-// FUNÇÃO AUXILIAR: insere em tabela relacional.
-// ============================
+// ==============================
 // FUNÇÃO AUXILIAR: insere em tabela relacional (usando Supabase)
+// ==============================
 async function inserirOuObterId(nomeTabela, campoNome, valor) {
   // Verifica se já existe
   const { data: existing, error: selectError } = await supabase
@@ -113,15 +136,33 @@ async function inserirOuObterId(nomeTabela, campoNome, valor) {
 }
 
 // ============================
-// PASSO 6 – Rota para receber formulário
+// PASSO 6 – Rota para receber formulário (CORRIGIDA)
 // ============================
 app.post('/submit-form', cpUpload, async (req, res) => {
+  let jogoId = null;
+  
   try {
     console.log('Dados recebidos no corpo:', req.body);
     console.log('Arquivos recebidos:', req.files);
 
-    // ====== Dados principais do jogo ======
-    const { name, descricao, preco, data_lanc, dev } = req.body; // REMOVE quantidade
+    // ====== VALIDAÇÃO DOS CAMPOS OBRIGATÓRIOS ======
+    const camposObrigatorios = ['name', 'descricao', 'preco', 'data-lanc', 'dev'];
+    const camposFaltantes = camposObrigatorios.filter(campo => !req.body[campo]);
+    
+    if (camposFaltantes.length > 0) {
+      return res.status(400).send(`Campos obrigatórios faltando: ${camposFaltantes.join(', ')}`);
+    }
+
+    // ====== VALIDAÇÃO DOS REQUISITOS ======
+    const requisitosMinimos = ['cpuMin', 'gpuMin', 'ramMin', 'soMin', 'directxMin', 'storageMin'];
+    const requisitosFaltantesMin = requisitosMinimos.filter(campo => !req.body[campo]);
+    
+    if (requisitosFaltantesMin.length > 0) {
+      return res.status(400).send(`Requisitos mínimos faltando: ${requisitosFaltantesMin.join(', ')}`);
+    }
+
+    // ====== INICIAR TRANSAÇÃO ======
+    const { name, descricao, preco, data_lanc, dev } = req.body;
     const dataLancamento = req.body['data-lanc'] ? new Date(req.body['data-lanc']).toISOString().split('T')[0] : null;
     const precoCorrigido = preco.replace(',', '.');
     const directxMin = req.body.directxMin;
@@ -133,18 +174,18 @@ app.post('/submit-form', cpUpload, async (req, res) => {
       .insert({
         nome: name,
         dev: dev,
-        preco: parseFloat(precoCorrigido),
+        preco: converterPreco(preco),
         data_lanc: dataLancamento,
         descricao: descricao,
         cont_midia: [],
         cont_capa: '',
-        arq_jogos: '' // NOVA COLUNA para armazenar caminho do arquivo
+        arq_jogos: ''
       })
       .select('id')
       .single();
 
     if (jogoError) throw jogoError;
-    const jogoId = jogoData.id;
+    jogoId = jogoData.id;
 
     // ====== Generos ======
     const generosSelecionados = Object.keys(req.body).filter(key =>
@@ -219,21 +260,21 @@ app.post('/submit-form', cpUpload, async (req, res) => {
         min_ram: converterParaMB(req.body.ramMin),
         min_so: req.body.soMin,
         min_dir: directxMin,
-        min_rom: converterParaMB(req.body.storageMin),
+        min_rom: converterParaMB(req.body.storageMin + (req.body.storageUnitMin || 'GB')), // CORREÇÃO AQUI
         max_cpu: req.body.cpuRec,
         max_gpu: req.body.gpuRec,
         max_ram: converterParaMB(req.body.ramRec),
         max_so: req.body.soRec,
         max_dir: directxRec,
-        max_rom: converterParaMB(req.body.storageRec)
+        max_rom: converterParaMB(req.body.storageRec + (req.body.storageUnitRec || 'GB')) // CORREÇÃO AQUI
       });
 
     if (requisitosError) throw requisitosError;
 
-    // ====== Criar pastas e salvar arquivos ======
-     const pastaJogo = `uploads/${name.replace(/\s+/g, '_')}_${jogoId}`;
+    // ====== Processar arquivos (só se tudo acima deu certo) ======
+    const pastaJogo = `uploads/${name.replace(/\s+/g, '_')}_${jogoId}`;
     const pastaCapa = path.join(pastaJogo, 'Capa');
-    const pastaArquivos = path.join(pastaJogo, 'Arquivos'); // NOVA PASTA
+    const pastaArquivos = path.join(pastaJogo, 'Arquivos');
 
     if (!fs.existsSync(pastaJogo)) fs.mkdirSync(pastaJogo, { recursive: true });
     if (!fs.existsSync(pastaCapa)) fs.mkdirSync(pastaCapa, { recursive: true });
@@ -242,7 +283,7 @@ app.post('/submit-form', cpUpload, async (req, res) => {
     let caminhoImagemCapa = null;
     let caminhoArquivoJogo = null;
 
-    // Processar imagem da capa
+    // Processar arquivos...
     if (req.files && req.files['imagem-capa']?.[0]) {
       const file = req.files['imagem-capa'][0];
       const novoCaminho = path.join(pastaCapa, file.originalname);
@@ -250,7 +291,6 @@ app.post('/submit-form', cpUpload, async (req, res) => {
       caminhoImagemCapa = novoCaminho;
     }
 
-    // Processar arquivo do jogo (NOVO)
     if (req.files && req.files['arquivo-jogo']?.[0]) {
       const file = req.files['arquivo-jogo'][0];
       const novoCaminho = path.join(pastaArquivos, file.originalname);
@@ -258,20 +298,32 @@ app.post('/submit-form', cpUpload, async (req, res) => {
       caminhoArquivoJogo = novoCaminho;
     }
 
-    // ====== Atualizar caminhos no banco ======
+    // ====== Atualizar caminhos ======
     const { error: updateError } = await supabase
       .from('jogos')
       .update({ 
         cont_capa: caminhoImagemCapa,
-        arq_jogos: caminhoArquivoJogo // SALVAR CAMINHO DO ARQUIVO
+        arq_jogos: caminhoArquivoJogo
       })
       .eq('id', jogoId);
 
     if (updateError) throw updateError;
 
     res.status(201).send('Jogo cadastrado com sucesso!');
+
   } catch (error) {
     console.error('Erro ao cadastrar jogo:', error);
+    
+    // ====== ROLLBACK: Se algo deu errado, deleta o jogo criado ======
+    if (jogoId) {
+      try {
+        await supabase.from('jogos').delete().eq('id', jogoId);
+        console.log('Rollback executado - jogo deletado');
+      } catch (deleteError) {
+        console.error('Erro no rollback:', deleteError);
+      }
+    }
+    
     res.status(500).send('Erro ao cadastrar jogo: ' + error.message);
   }
 });
